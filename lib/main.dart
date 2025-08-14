@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
 import 'package:hr_attendance_tracker/screens/attendance_history_screen.dart';
 import 'package:hr_attendance_tracker/screens/employee_profile_screen.dart';
 import 'package:hr_attendance_tracker/screens/home_screen.dart';
 import 'package:hr_attendance_tracker/widgets/custom_buttom_nav_bar.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(create: (_) => AttendanceProvider(), child: MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
