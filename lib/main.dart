@@ -54,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _currentIndex = index);
   }
 
-  final List<Widget> _screens = [
+  List<Widget> get _screens => [
     HomeScreen(),
     AttendanceHistoryScreen(),
     EmployeeProfileScreen(),
@@ -63,6 +63,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff8fafc),
       body: SafeArea(child: _screens[_currentIndex]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

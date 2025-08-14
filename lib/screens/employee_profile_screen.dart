@@ -21,13 +21,17 @@ class EmployeeProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        buildProfileHeader(context),
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(
+              vertical: 0.0,
+              horizontal: 16.0,
+            ),
             children: [
+              buildProfileHeader(context),
+              SizedBox(height: 20),
               buildContactInfo(context, "Contact Information"),
-              Divider(),
+              SizedBox(height: 20),
               buildEmployeeInfo(context, "Employee Information"),
             ],
           ),
@@ -47,25 +51,22 @@ Widget buildProfileHeader(BuildContext context) {
     children: [
       Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Container(
-              height: 210,
-              decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
-                ),
+          Container(
+            height: 210,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade100,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Text(
-                    "Today's Date: $date",
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 16.0),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  "Today's Date: $date",
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
               ),
             ),
@@ -99,9 +100,9 @@ Widget buildProfileHeader(BuildContext context) {
 }
 
 Widget buildContactInfo(BuildContext context, title) {
-  return Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-    margin: const EdgeInsets.symmetric(vertical: 8),
+  return Card(
+    elevation: 0,
+    color: Colors.white,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -122,9 +123,9 @@ Widget buildContactInfo(BuildContext context, title) {
 }
 
 Widget buildEmployeeInfo(BuildContext context, title) {
-  return Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-    margin: const EdgeInsets.symmetric(vertical: 8),
+  return Card(
+    color: Colors.white,
+    elevation: 0,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

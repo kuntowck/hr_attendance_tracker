@@ -76,17 +76,19 @@ class AttendanceHistoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Attendance History")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-          child: ListView.separated(
-            itemCount: attendanceData.length,
-            separatorBuilder: (context, index) => const Divider(),
-            itemBuilder: (context, index) {
-              final item = attendanceData[index];
-              return _tile(item);
-            },
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+            child: ListView.separated(
+              itemCount: attendanceData.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 4),
+              itemBuilder: (context, index) {
+                final item = attendanceData[index];
+                return _tile(item);
+              },
+            ),
           ),
         ),
       ),
@@ -94,37 +96,41 @@ class AttendanceHistoryScreen extends StatelessWidget {
   }
 }
 
-ListTile _tile(item) {
-  return ListTile(
-    leading: CircleAvatar(
-      radius: 20,
-      backgroundColor: Colors.blue.shade100,
-      child: Icon(Icons.calendar_today, color: Colors.blue, size: 20),
-    ),
-    title: Text(
-      item["date"]!,
-      style: const TextStyle(fontWeight: FontWeight.bold),
-    ),
-    subtitle: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Check In: ${item["checkIn"]}"),
-        Text("Check Out: ${item["checkOut"]}"),
-      ],
-    ),
-    trailing: Container(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      decoration: BoxDecoration(
-        color: item["status"] == "Present"
-            ? Colors.green.shade100
-            : Colors.red.shade100,
-        borderRadius: BorderRadius.circular(8),
+Widget _tile(item) {
+  return Card(
+    color: Colors.white,
+    elevation: 0,
+    child: ListTile(
+      leading: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.blue.shade100,
+        child: Icon(Icons.calendar_today, color: Colors.blue, size: 20),
       ),
-      child: Text(
-        item["status"]!,
-        style: TextStyle(
-          color: item["status"] == "Present" ? Colors.green : Colors.red,
-          fontWeight: FontWeight.bold,
+      title: Text(
+        item["date"]!,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Check In: ${item["checkIn"]}"),
+          Text("Check Out: ${item["checkOut"]}"),
+        ],
+      ),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        decoration: BoxDecoration(
+          color: item["status"] == "Present"
+              ? Colors.green.shade100
+              : Colors.red.shade100,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          item["status"]!,
+          style: TextStyle(
+            color: item["status"] == "Present" ? Colors.green : Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     ),
