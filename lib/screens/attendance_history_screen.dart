@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class AttendanceHistoryScreen extends StatelessWidget {
   const AttendanceHistoryScreen({super.key});
@@ -89,7 +90,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
             separatorBuilder: (context, index) => const SizedBox(height: 4),
             itemBuilder: (context, index) {
               final item = attendanceProvider.history[index];
-              return _tile(item);
+              return _tile(item, attendanceProvider);
             },
           ),
         ),
@@ -98,7 +99,7 @@ class AttendanceHistoryScreen extends StatelessWidget {
   }
 }
 
-Widget _tile(item) {
+Widget _tile(item, provider) {
   return Card(
     color: Colors.white,
     elevation: 0,
@@ -115,8 +116,14 @@ Widget _tile(item) {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Check In: ${item.checkIn}"),
-          Text("Check Out: ${item.checkOut}"),
+          Text(
+            "Check In: ${DateFormat('HH:mm').format(item.checkIn)}",
+          ),
+          Text(
+            "Check Out: ${DateFormat('HH:mm').format(item.checkOut)}",
+          ),
+          // Text("Duration: ${item.duration}"),
+          Text("Duration: ${item.duration.inHours} jam ${item.duration.inMinutes.remainder(60)} menit"),
         ],
       ),
       trailing: AttendanceStatus(status: item.status),

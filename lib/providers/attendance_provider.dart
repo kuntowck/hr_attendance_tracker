@@ -6,19 +6,17 @@ class AttendanceProvider extends ChangeNotifier {
   AttendanceModel? _attendanceRecord;
   final List<AttendanceModel> _attendanceHistory = [];
   bool _isCheckedIn = false;
+  // DateFormat formatTime = DateFormat('HH:mm');
 
   AttendanceModel? get record => _attendanceRecord;
   List<AttendanceModel> get history => _attendanceHistory;
   bool get isCheckedIn => _isCheckedIn;
-
-  String formattedDate = DateFormat('EEEE, d MMM').format(DateTime.now());
-  String formattedTime = DateFormat('HH:mm').format(DateTime.now());
+  String get formattedDate => DateFormat('EEEE, d MMM').format(DateTime.now());
 
   void checkIn() {
     _attendanceRecord = AttendanceModel(
       date: formattedDate,
-      checkIn: DateFormat('HH:mm').format(DateTime.now()),
-      checkOut: null,
+      checkIn: DateTime.now(),
       status: 'In Progress',
     );
 
@@ -29,9 +27,19 @@ class AttendanceProvider extends ChangeNotifier {
 
   void checkOut() {
     if (_attendanceRecord != null) {
-      _attendanceRecord!.checkOut = DateFormat('HH:mm').format(DateTime.now());
-      
-      _attendanceRecord!.status = 'Present';
+      final now = DateTime.now();
+
+      DateTime adjustedCheckOut = now;
+      if (adjustedCheckOut.isBefore(_attendanceRecord!.checkIn)) {
+        adjustedCheckOut = adjustedCheckOut.add(Duration(days: 1));
+      }
+
+      final duration = adjustedCheckOut.difference(_attendanceRecord!.checkIn);
+
+      _attendanceRecord!
+        ..checkOut = now
+        ..status = 'Present'
+        ..duration = duration;
 
       _attendanceHistory.add(_attendanceRecord!);
       _attendanceRecord = null;

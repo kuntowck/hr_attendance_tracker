@@ -3,6 +3,7 @@ import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,7 +36,7 @@ class HomeScreen extends StatelessWidget {
       child: Container(
         height: 160,
         decoration: BoxDecoration(
-          color: Colors.blue.shade100,
+          color: Colors.white,
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(32),
             bottomRight: Radius.circular(32),
@@ -87,7 +88,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             Text(
               provider.formattedDate,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
             if (provider.isCheckedIn) ...[
@@ -99,7 +100,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text('Check-in:'),
                       Text(
-                        provider.record.checkIn,
+                        DateFormat('HH:mm').format(provider.record.checkIn),
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                     ],
