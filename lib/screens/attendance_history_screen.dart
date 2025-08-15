@@ -110,7 +110,7 @@ Widget _tile(item, provider) {
         child: Icon(Icons.calendar_today, color: Colors.blue, size: 20),
       ),
       title: Text(
-        item.date!,
+        DateFormat('EEEE, d MMM').format(item.date),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Column(

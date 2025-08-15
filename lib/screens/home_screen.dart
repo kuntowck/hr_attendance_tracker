@@ -115,7 +115,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: provider.isCheckedIn
+                    onPressed: provider.isCheckedIn || provider.isCheckedInToday
                         ? null
                         : () {
                             provider.checkIn();

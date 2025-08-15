@@ -6,17 +6,31 @@ class AttendanceProvider extends ChangeNotifier {
   AttendanceModel? _attendanceRecord;
   final List<AttendanceModel> _attendanceHistory = [];
   bool _isCheckedIn = false;
-  // DateFormat formatTime = DateFormat('HH:mm');
 
   AttendanceModel? get record => _attendanceRecord;
   List<AttendanceModel> get history => _attendanceHistory;
-  bool get isCheckedIn => _isCheckedIn;
   String get formattedDate => DateFormat('EEEE, d MMM').format(DateTime.now());
+  bool get isCheckedIn => _isCheckedIn;
+  bool get isCheckedInToday {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    bool alreadyCheckedInToday = _attendanceHistory.any(
+      (history) =>
+          history.date.year == today.year &&
+          history.date.month == today.month &&
+          history.date.day == today.day,
+    );
+
+    return alreadyCheckedInToday;
+  }
 
   void checkIn() {
+    final now = DateTime.now();
+
     _attendanceRecord = AttendanceModel(
-      date: formattedDate,
-      checkIn: DateTime.now(),
+      date: now,
+      checkIn: now,
       status: 'In Progress',
     );
 
