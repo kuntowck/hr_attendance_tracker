@@ -127,9 +127,39 @@ class HomeScreen extends StatelessWidget {
                 if (provider.record != null) ...[
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () =>
-                          context.read<AttendanceProvider>().checkOut(),
-                      child: Text('Check-out'),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Confirm Check Out'),
+                              content: const Text(
+                                'Are you sure want to chek-out now?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                      context,
+                                    ); // Tutup dialog tanpa action
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    context
+                                        .read<AttendanceProvider>()
+                                        .checkOut();
+                                    Navigator.pop(context);
+                                  }, // Tutup dialog
+                                  child: Text('Yes, check-out'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: const Text('Check-out'),
                     ),
                   ),
                 ],
