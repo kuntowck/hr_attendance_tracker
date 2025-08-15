@@ -14,6 +14,8 @@ class AttendanceStatus extends StatelessWidget {
             ? Colors.green.shade50
             : status == "In Progress"
             ? Colors.lightBlue.shade50
+            : status == "Unknown"
+            ? Colors.blueGrey.shade50
             : Colors.red.shade50,
         borderRadius: BorderRadius.circular(8),
       ),
@@ -24,6 +26,8 @@ class AttendanceStatus extends StatelessWidget {
               ? Colors.green
               : status == "In Progress"
               ? Colors.blue
+              : status == "Unknown"
+              ? Colors.blueGrey
               : Colors.red,
           fontWeight: FontWeight.bold,
         ),

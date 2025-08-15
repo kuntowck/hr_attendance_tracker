@@ -52,7 +52,7 @@ Widget profileHeader(BuildContext context) {
       Stack(
         children: [
           Container(
-            height: 210,
+            height: 160,
             decoration: BoxDecoration(
               color: Colors.blue.shade100,
               borderRadius: const BorderRadius.only(
@@ -83,8 +83,8 @@ Widget profileHeader(BuildContext context) {
               child: ClipOval(
                 child: Image.asset(
                   profileImage,
-                  width: 150,
-                  height: 150,
+                  width: 100,
+                  height: 100,
                   fit: BoxFit.cover,
                 ),
               ),
