@@ -28,11 +28,11 @@ class EmployeeProfileScreen extends StatelessWidget {
               horizontal: 16.0,
             ),
             children: [
-              buildProfileHeader(context),
-              SizedBox(height: 20),
-              buildContactInfo(context, "Contact Information"),
-              SizedBox(height: 20),
-              buildEmployeeInfo(context, "Employee Information"),
+              profileHeader(context),
+              const SizedBox(height: 16),
+              contactInfo(context, "Contact Information"),
+              const SizedBox(height: 16),
+              employeeInfo(context, "Employee Information"),
             ],
           ),
         ),
@@ -42,7 +42,7 @@ class EmployeeProfileScreen extends StatelessWidget {
   }
 }
 
-Widget buildProfileHeader(BuildContext context) {
+Widget profileHeader(BuildContext context) {
   final today = DateTime.now();
   final date =
       "${today.day.toString().padLeft(2, '0')}-${today.month.toString().padLeft(2, '0')}-${today.year}";
@@ -99,7 +99,7 @@ Widget buildProfileHeader(BuildContext context) {
   );
 }
 
-Widget buildContactInfo(BuildContext context, title) {
+Widget contactInfo(BuildContext context, title) {
   return Card(
     elevation: 0,
     color: Colors.white,
@@ -122,7 +122,7 @@ Widget buildContactInfo(BuildContext context, title) {
   );
 }
 
-Widget buildEmployeeInfo(BuildContext context, title) {
+Widget employeeInfo(BuildContext context, title) {
   return Card(
     color: Colors.white,
     elevation: 0,

@@ -1,13 +1,18 @@
 class AttendanceModel {
-  DateTime date;
-  DateTime checkIn;
-  DateTime checkOut;
-  String status;
+  String date;
+  String checkIn;
+  String? checkOut;
+  String? status;
 
   AttendanceModel({
     required this.date,
     required this.checkIn,
-    required this.checkOut,
-    required this.status,
+    this.checkOut,
+    this.status,
   });
+
+  @override
+  String toString() {
+    return 'Attendance(date: $date, checkin: $checkIn, checkout: $checkOut, status: $status)';
+  }
 }

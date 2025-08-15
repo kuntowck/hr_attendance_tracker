@@ -1,18 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:hr_attendance_tracker/models/attendance_model.dart';
 
 class AttendanceProvider extends ChangeNotifier {
-  final List<AttendanceModel> _records = [];
+  AttendanceModel? _attendanceRecord;
+  final List<AttendanceModel> _attendanceHistory = [];
+  bool _isCheckedIn = false;
 
-  List<AttendanceModel> get records => _records;
+  AttendanceModel? get record => _attendanceRecord;
+  List<AttendanceModel> get history => _attendanceHistory;
+  bool get isCheckedIn => _isCheckedIn;
 
-  void addRecord(AttendanceModel attendance) {
-    _records.add(attendance);
+  String formattedDate = DateFormat('EEEE, d MMM').format(DateTime.now());
+  String formattedTime = DateFormat('HH:mm').format(DateTime.now());
+
+  void checkIn() {
+    _attendanceRecord = AttendanceModel(
+      date: formattedDate,
+      checkIn: DateFormat('HH:mm').format(DateTime.now()),
+      checkOut: null,
+      status: 'In Progress',
+    );
+
+    _isCheckedIn = true;
+
     notifyListeners();
   }
 
-  void updateRecord(int index, AttendanceModel attendance) {
-    _records[index] = attendance;
-    notifyListeners();
+  void checkOut() {
+    if (_attendanceRecord != null) {
+      _attendanceRecord!.checkOut = DateFormat('HH:mm').format(DateTime.now());
+      
+      _attendanceRecord!.status = 'Present';
+
+      _attendanceHistory.add(_attendanceRecord!);
+      _attendanceRecord = null;
+      _isCheckedIn = false;
+
+      notifyListeners();
+    }
   }
 }
