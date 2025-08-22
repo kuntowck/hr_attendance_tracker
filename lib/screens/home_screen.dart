@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               appInfoCard(context, "About This App"),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               attendanceRecord(context, attendanceProvider),
             ],
           ),

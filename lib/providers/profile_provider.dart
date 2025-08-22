@@ -14,6 +14,7 @@ class ProfileProvider extends ChangeNotifier {
     email: "kunto@solecode.id",
     phone: "+62 812-3456-7890",
     location: "Jakarta, Indonesia",
+    profileImage: null,
   );
 
   Profile get profiles => _profiles;
@@ -39,7 +40,6 @@ class ProfileProvider extends ChangeNotifier {
   void setImage(File? value) {
     if (value != null) {
       profileImage = value;
-      print(profileImage);
     }
     notifyListeners();
   }
@@ -55,7 +55,9 @@ class ProfileProvider extends ChangeNotifier {
     return formKey.currentState!.validate();
   }
 
-  void updateProfile() {
+  Future<void> updateProfile() async {
+    await Future.delayed(Duration(seconds: 2));
+
     _profiles = Profile(
       fullName: fullNameController.text,
       position: positionController.text,
@@ -63,21 +65,21 @@ class ProfileProvider extends ChangeNotifier {
       email: emailController.text,
       phone: phoneController.text,
       location: locationController.text,
-      profileImage: profileImage!,
+      profileImage: profileImage,
     );
     notifyListeners();
   }
 
-  void resetForm() {
-    fullNameController.clear();
-    positionController.clear();
-    departmentController.clear();
-    emailController.clear();
-    phoneController.clear();
-    locationController.clear();
-    profileImage = null;
-    notifyListeners();
-  }
+  // void resetForm() {
+  //   fullNameController.clear();
+  //   positionController.clear();
+  //   departmentController.clear();
+  //   emailController.clear();
+  //   phoneController.clear();
+  //   locationController.clear();
+  //   profileImage = null;
+  //   notifyListeners();
+  // }
 
   @override
   void dispose() {
