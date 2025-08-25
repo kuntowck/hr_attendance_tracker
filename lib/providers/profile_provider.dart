@@ -26,6 +26,13 @@ class ProfileProvider extends ChangeNotifier {
   late TextEditingController phoneController;
   late TextEditingController locationController;
 
+  late String _backupFullName;
+  late String _backupPosition;
+  late String _backupDepartment;
+  late String _backupEmail;
+  late String _backupPhone;
+  late String _backupLocation;
+
   File? profileImage;
 
   ProfileProvider() {
@@ -35,6 +42,26 @@ class ProfileProvider extends ChangeNotifier {
     emailController = TextEditingController(text: profiles.email);
     phoneController = TextEditingController(text: profiles.phone);
     locationController = TextEditingController(text: profiles.location);
+
+    _backupProfile();
+  }
+
+  void _backupProfile() {
+    _backupFullName = fullNameController.text;
+    _backupPosition = positionController.text;
+    _backupDepartment = departmentController.text;
+    _backupEmail = emailController.text;
+    _backupPhone = phoneController.text;
+    _backupLocation = locationController.text;
+  }
+
+  void discardChanges() {
+    fullNameController.text = _backupFullName;
+    positionController.text = _backupPosition;
+    departmentController.text = _backupDepartment;
+    emailController.text = _backupEmail;
+    phoneController.text = _backupPhone;
+    locationController.text = _backupLocation;
   }
 
   void setImage(File? value) {
@@ -67,19 +94,10 @@ class ProfileProvider extends ChangeNotifier {
       location: locationController.text,
       profileImage: profileImage,
     );
+    _backupProfile();
+
     notifyListeners();
   }
-
-  // void resetForm() {
-  //   fullNameController.clear();
-  //   positionController.clear();
-  //   departmentController.clear();
-  //   emailController.clear();
-  //   phoneController.clear();
-  //   locationController.clear();
-  //   profileImage = null;
-  //   notifyListeners();
-  // }
 
   @override
   void dispose() {

@@ -265,7 +265,7 @@ Widget _contentInputField(
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            // profileProvider.resetForm();
+                            profileProvider.discardChanges();
 
                             Navigator.pop(context);
                             Navigator.pop(context);
