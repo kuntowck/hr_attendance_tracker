@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
+import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -77,7 +78,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget attendanceRecord(BuildContext context, provider) {
+  Widget attendanceRecord(BuildContext context, AttendanceProvider provider) {
     return Card(
       color: Colors.white,
       elevation: 0,
@@ -100,12 +101,16 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text('Check-in:'),
                       Text(
-                        DateFormat('HH:mm').format(provider.record.checkIn),
+                        provider.record?.checkIn != null
+                            ? DateFormat(
+                                'HH:mm',
+                              ).format(provider.record!.checkIn)
+                            : '-',
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                     ],
                   ),
-                  AttendanceStatus(status: provider.record.status),
+                  AttendanceStatus(status: provider.record?.status ?? ''),
                 ],
               ),
             ],
@@ -126,40 +131,15 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 if (provider.record != null) ...[
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Confirm Check Out'),
-                              content: const Text(
-                                'Are you sure want to chek-out now?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(
-                                      context,
-                                    ); // Tutup dialog tanpa action
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    context
-                                        .read<AttendanceProvider>()
-                                        .checkOut();
-                                    Navigator.pop(context);
-                                  }, // Tutup dialog
-                                  child: Text('Yes, check-out'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: const Text('Check-out'),
+                    child: CustomSubmitButtonDialog(
+                      submitText: 'Check-out',
+                      titleDialog: 'Confirm Check Out',
+                      contentDialog: 'Are you sure want to chek-out now?',
+                      confirmButtonDialogText: 'Yes, check-out',
+                      validateForm: () => true,
+                      onSubmitSync: () => provider.checkOut(),
+                      successMessage: 'Check-in succesfully.',
+                      errorMessage: 'Check-in failed',
                     ),
                   ),
                 ],

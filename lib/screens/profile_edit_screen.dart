@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hr_attendance_tracker/providers/profile_provider.dart';
+import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -245,7 +246,6 @@ Widget _contentInputField(
 
           const SizedBox(height: 16),
 
-          // Button selalu di bawah kanan
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -278,78 +278,19 @@ Widget _contentInputField(
                 },
                 child: const Text('Cancel'),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (profileProvider.validateForm()) {
-                    showDialog(
-                      context: context,
-                      builder: (contenxt) => AlertDialog(
-                        title: const Text('Confirm Update Profile'),
-                        content: const Text('Are you sure want to update?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final navigator = Navigator.of(context);
-                              final messenger = ScaffoldMessenger.of(context);
-
-                              Navigator.pop(context, true);
-
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) {
-                                  return const SimpleDialog(
-                                    backgroundColor: Colors.white,
-                                    children: [
-                                      Center(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CircularProgressIndicator(),
-                                            SizedBox(height: 16),
-                                            Text('Updating profile...'),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-
-                              try {
-                                await profileProvider.updateProfile();
-
-                                navigator.pop();
-
-                                messenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Profile updated successfully.',
-                                    ),
-                                  ),
-                                );
-
-                                navigator.pop();
-                              } catch (e) {
-                                navigator.pop();
-
-                                messenger.showSnackBar(
-                                  SnackBar(content: Text('Update failed: $e')),
-                                );
-                              }
-                            },
-                            child: const Text('Update Profile'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+              CustomSubmitButtonDialog(
+                submitText: 'Update',
+                titleDialog: 'Confirm Update Profile',
+                contentDialog: 'Are you sure want to update?',
+                confirmButtonDialogText: 'Update Profile',
+                validateForm: profileProvider.validateForm,
+                onSubmitAsync: () async =>
+                    await profileProvider.updateProfile(),
+                successMessage: 'Profile updated successfully.',
+                errorMessage: 'Update failed',
+                onSuccessRedirect: () {
+                  Navigator.pop(context);
                 },
-                child: const Text('Update'),
               ),
             ],
           ),
