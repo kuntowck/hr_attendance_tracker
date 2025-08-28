@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hr_attendance_tracker/models/profile_model.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
+import 'package:hr_attendance_tracker/providers/profile_provider.dart';
+import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
 import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,48 +15,76 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final attendanceProvider = context.watch<AttendanceProvider>();
+    final profileProvider = context.read<ProfileProvider>().profiles;
 
-    return Column(
-      children: [
-        welcomeHeader(context),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              appInfoCard(context, "About This App"),
-              const SizedBox(height: 8),
-              attendanceRecord(context, attendanceProvider),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(child: Text('Menu')),
+            ListTile(
+              leading: Icon(Icons.phone),
+              title: Text('About'),
+              onTap: () {
+                Navigator.pushNamed(context, Routes.about);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pushNamed(context, Routes.setting);
+              },
+            ),
+          ],
         ),
-        AppVersion(),
-      ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  welcomeHeader(context, profileProvider),
+                  const SizedBox(height: 8),
+                  appInfoCard(context, "About This App"),
+                  const SizedBox(height: 8),
+                  attendanceRecord(context, attendanceProvider),
+                ],
+              ),
+            ),
+            AppVersion(),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget welcomeHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        height: 160,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(32),
-            bottomRight: Radius.circular(32),
-          ),
+  Widget welcomeHeader(BuildContext context, Profile provider) {
+    return Container(
+      // height: 100,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        // color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Welcome Aboard 👋🏼",
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Hello, ${provider.fullName} 👋🏼",
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

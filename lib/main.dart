@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
 import 'package:hr_attendance_tracker/providers/profile_provider.dart';
+import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/screens/attendance_history_screen.dart';
 import 'package:hr_attendance_tracker/screens/profile_screen.dart';
 import 'package:hr_attendance_tracker/screens/home_screen.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const MainScreen(),
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }
@@ -74,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff8fafc),
+      // backgroundColor: Color(0xfff8fafc),
       body: SafeArea(child: _screens[_currentIndex]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
