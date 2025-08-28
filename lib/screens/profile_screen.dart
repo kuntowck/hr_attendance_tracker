@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hr_attendance_tracker/providers/profile_provider.dart';
+import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/screens/profile_edit_screen.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:provider/provider.dart';
@@ -72,10 +73,11 @@ Widget profileHeader(BuildContext context, provider) {
             right: 20,
             child: IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileEditScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ProfileEditScreen()),
+                // );
+                Navigator.pushNamed(context, Routes.editProfile);
               },
               icon: Icon(Icons.edit, color: Colors.blue),
             ),

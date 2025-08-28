@@ -36,7 +36,7 @@ class ProfileEditScreen extends StatelessWidget {
     final profileProvider = context.watch<ProfileProvider>();
 
     return Scaffold(
-      // appBar: AppBar(title: Text('Edit Profile')),
+      appBar: AppBar(title: Text('Edit Profile')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
