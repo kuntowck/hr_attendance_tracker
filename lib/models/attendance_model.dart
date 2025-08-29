@@ -1,13 +1,13 @@
 class AttendanceModel {
   final DateTime date;
-  final DateTime checkIn;
+  DateTime? checkIn;
   DateTime? checkOut;
   String? status;
   Duration? duration;
 
   AttendanceModel({
     required this.date,
-    required this.checkIn,
+    this.checkIn,
     this.checkOut,
     this.status,
     this.duration,
