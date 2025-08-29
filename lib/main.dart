@@ -76,18 +76,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Color(0xfff8fafc),
       body: SafeArea(child: _screens[_currentIndex]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AttendanceHistoryScreen()),
-          );
-        },
-        tooltip: 'Attendance History',
-        child: Icon(Icons.contact_mail),
-      ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: _changeTab,
