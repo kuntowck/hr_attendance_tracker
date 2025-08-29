@@ -5,6 +5,7 @@ import 'package:hr_attendance_tracker/providers/profile_provider.dart';
 import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
+import 'package:hr_attendance_tracker/widgets/carousel.dart';
 import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,12 +19,80 @@ class HomeScreen extends StatelessWidget {
     final profileProvider = context.read<ProfileProvider>().profiles;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer(); // buka drawer manual
+              },
+              icon: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary, // border pakai warna theme
+                    width: 2,
+                  ),
+                ),
+                child: ClipOval(
+                  child: profileProvider.profileImage != null
+                      ? Image.file(
+                          profileProvider.profileImage!,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          "assets/img/profile.jpg",
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(child: Text('Menu')),
+            DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      ClipOval(
+                        child: profileProvider.profileImage != null
+                            ? Image.file(
+                                profileProvider.profileImage!,
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                "assets/img/profile.jpg",
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        profileProvider.fullName,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             ListTile(
               leading: Icon(Icons.phone),
               title: Text('About'),
@@ -53,6 +122,8 @@ class HomeScreen extends StatelessWidget {
                   appInfoCard(context, "About This App"),
                   const SizedBox(height: 8),
                   attendanceRecord(context, attendanceProvider),
+                  const SizedBox(height: 8),
+                  Carousel(),
                 ],
               ),
             ),
@@ -135,7 +206,7 @@ class HomeScreen extends StatelessWidget {
                         provider.record?.checkIn != null
                             ? DateFormat(
                                 'HH:mm',
-                              ).format(provider.record!.checkIn)
+                              ).format(provider.record!.checkIn!)
                             : '-',
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
