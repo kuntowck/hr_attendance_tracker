@@ -15,11 +15,15 @@ class AttendanceHistoryScreen extends StatefulWidget {
 class _AttendanceHistoryState extends State<AttendanceHistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  List<String> tabNames = ['Logs', 'Attendance', 'Shift'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    Future.microtask(
+      () => context.read<AttendanceProvider>().loadAttendances(),
+    );
   }
 
   @override
@@ -30,44 +34,43 @@ class _AttendanceHistoryState extends State<AttendanceHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final attendanceProvider = context.read<AttendanceProvider>();
+    final attendanceProvider = context.watch<AttendanceProvider>();
+    // print("isLoading on log list screen: ${attendanceProvider.isLoading}");
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Attendance History"),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
-            Tab(text: 'Logs'),
-            Tab(text: 'Attendance'),
-            Tab(text: 'Shift'),
-          ],
+          tabs: tabNames.map((name) => Tab(text: name)).toList(),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          buildProjectList(attendanceProvider, 'Logs'),
-          buildProjectList(attendanceProvider, 'Attendance'),
-          buildProjectList(attendanceProvider, 'Shift'),
-        ],
-      ),
+      body: attendanceProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : attendanceProvider.errorMessage != null
+          ? Center(child: Text(attendanceProvider.errorMessage!))
+          : TabBarView(
+              controller: _tabController,
+              children: tabNames
+                  .map((name) => buildProjectList(attendanceProvider, name))
+                  .toList(),
+            ),
     );
   }
 }
 
 Widget buildProjectList(AttendanceProvider attendanceProvider, String tabName) {
-  if (attendanceProvider.mergedRecords.isEmpty) {
+  if (attendanceProvider.history.isEmpty) {
     return const Center(child: Text('No logs found'));
   }
   List<AttendanceModel> records = [];
 
   if (tabName == 'Logs') {
-    records = attendanceProvider.mergedRecords;
+    records = attendanceProvider.history;
   }
 
   if (tabName == 'Attendance') {
-    records = attendanceProvider.mergedRecords
+    records = attendanceProvider.history
         .where((record) => record.checkOut == null)
         .toList();
   }

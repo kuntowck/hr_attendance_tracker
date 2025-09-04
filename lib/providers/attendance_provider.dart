@@ -1,38 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hr_attendance_tracker/services/attendance_service.dart';
 import 'package:intl/intl.dart';
 import 'package:hr_attendance_tracker/models/attendance_model.dart';
 
 class AttendanceProvider extends ChangeNotifier {
-  final List<AttendanceModel> _attendanceHistory = [];
+  final AttendanceService _service = AttendanceService();
+  List<AttendanceModel> _attendanceHistory = [];
   AttendanceModel? _attendanceRecord;
   bool _isCheckedIn = false;
-  final List<AttendanceModel> dummyRecords = List.generate(7, (i) {
-    final date = DateTime.now().subtract(Duration(days: i + 1));
-
-    if (i == 2) {
-      return AttendanceModel(
-        date: date,
-        checkIn: DateTime(date.year, date.month, date.day, 8),
-        status: 'Missed',
-      );
-    }
-    if (i == 5) {
-      return AttendanceModel(date: date, checkOut: null, status: 'Missed');
-    }
-
-    return AttendanceModel(
-      date: date,
-      checkIn: DateTime(date.year, date.month, date.day, 8),
-      checkOut: DateTime(date.year, date.month, date.day, 17),
-      status: 'Present',
-      duration: Duration(hours: 8),
-    );
-  });
 
   AttendanceModel? get record => _attendanceRecord;
   List<AttendanceModel> get history => _attendanceHistory;
   String get formattedDate => DateFormat('EEEE, d MMM').format(DateTime.now());
   bool get isCheckedIn => _isCheckedIn;
+
   bool get isCheckedInToday {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -47,51 +28,83 @@ class AttendanceProvider extends ChangeNotifier {
     return alreadyCheckedInToday;
   }
 
-  List<AttendanceModel> get mergedRecords =>
-      [..._attendanceHistory, ...dummyRecords]
-        ..sort((a, b) => a.date.compareTo(b.date));
+  String? _errorMessage;
+  bool _isLoading = false;
 
-  void checkIn() {
-    final now = DateTime.now();
+  String? get errorMessage => _errorMessage;
+  bool get isLoading => _isLoading;
 
-    _attendanceRecord = AttendanceModel(
-      date: now,
-      checkIn: now,
-      status: 'In Progress',
-    );
-
-    _isCheckedIn = true;
-
+  Future<void> loadAttendances() async {
+    _errorMessage = null;
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      _attendanceHistory = await _service.fetchAttendances();
+
+      await Future.delayed(Duration(seconds: 1));
+    } catch (e) {
+      _errorMessage = e.toString().replaceFirst("Exception: ", "");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  void checkOut() {
-    if (_attendanceRecord != null) {
+  Future<void> checkIn() async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
       final now = DateTime.now();
 
-      DateTime adjustedCheckOut = now;
-
-      // jika lewat hari berikutnya
-      if (_attendanceRecord != null &&
-          _attendanceRecord!.checkIn != null &&
-          adjustedCheckOut.isBefore(_attendanceRecord!.checkIn!)) {
-        adjustedCheckOut = adjustedCheckOut.add(Duration(days: 1));
-      }
-
-      final duration = adjustedCheckOut.difference(
-        _attendanceRecord!.checkIn ?? adjustedCheckOut,
+      _attendanceRecord = await _service.addAttendanceRecord(
+        AttendanceModel(date: now, checkIn: now, status: 'In Progress'),
       );
+      loadAttendances();
 
-      _attendanceRecord!
-        ..checkOut = now
-        ..status = 'Present'
-        ..duration = duration;
+      _isCheckedIn = true;
+    } catch (e) {
+      _errorMessage = e.toString();
+    }
+  }
 
-      _attendanceHistory.add(_attendanceRecord!);
-      _attendanceRecord = null;
-      _isCheckedIn = false;
+  Future<void> checkOut() async {
+    _errorMessage = null;
+    notifyListeners();
 
-      notifyListeners();
+    try {
+      if (_attendanceRecord != null) {
+        final now = DateTime.now();
+
+        DateTime adjustedCheckOut = now;
+
+        // jika lewat hari berikutnya
+        if (_attendanceRecord != null &&
+            _attendanceRecord!.checkIn != null &&
+            adjustedCheckOut.isBefore(_attendanceRecord!.checkIn!)) {
+          adjustedCheckOut = adjustedCheckOut.add(Duration(days: 1));
+        }
+
+        final duration = adjustedCheckOut.difference(
+          _attendanceRecord!.checkIn ?? adjustedCheckOut,
+        );
+
+        await _service.updateAttendanceRecord(
+          _attendanceRecord!
+            ..checkOut = now
+            ..status = 'Present'
+            ..duration = duration,
+        );
+
+        _attendanceHistory.add(_attendanceRecord!);
+        loadAttendances();
+
+        _attendanceRecord = null;
+        _isCheckedIn = false;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
     }
   }
 }

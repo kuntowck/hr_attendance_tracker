@@ -70,14 +70,14 @@ class HomeScreen extends StatelessWidget {
                         child: profileProvider.profileImage != null
                             ? Image.file(
                                 profileProvider.profileImage!,
-                                width: 36,
-                                height: 36,
+                                width: 50,
+                                height: 50,
                                 fit: BoxFit.cover,
                               )
                             : Image.asset(
                                 "assets/img/profile.jpg",
-                                width: 36,
-                                height: 36,
+                                width: 50,
+                                height: 50,
                                 fit: BoxFit.cover,
                               ),
                       ),
@@ -239,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                       contentDialog: 'Are you sure want to chek-out now?',
                       confirmButtonDialogText: 'Yes, check-out',
                       validateForm: () => true,
-                      onSubmitSync: () => provider.checkOut(),
+                      onSubmitAsync: () => provider.checkOut(),
                       successMessage: 'Check-in succesfully.',
                       errorMessage: 'Check-in failed',
                     ),
