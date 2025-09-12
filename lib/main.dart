@@ -1,6 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hr_attendance_tracker/config/env.dart';
+import 'package:hr_attendance_tracker/providers/admin_provider.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
+import 'package:hr_attendance_tracker/providers/auth_provider.dart';
 import 'package:hr_attendance_tracker/providers/profile_provider.dart';
 import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/screens/attendance_history_screen.dart';
@@ -8,13 +13,34 @@ import 'package:hr_attendance_tracker/screens/profile_screen.dart';
 import 'package:hr_attendance_tracker/screens/home_screen.dart';
 import 'package:hr_attendance_tracker/widgets/custom_buttom_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load env
+  await dotenv.load(fileName: ".env");
+
+  // Firebase init
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      projectId: Env.firebaseProjectId,
+      messagingSenderId: Env.firebaseSenderId,
+      apiKey: Env.firebaseApiKey,
+      appId: Env.firebaseAppId,
+    ),
+  );
+
+  // Supabase init
+  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => ProfileProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: MyApp(),
     ),
@@ -47,7 +73,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainScreen(),
+      // home: const MainScreen(),
+      initialRoute: Routes.login,
       onGenerateRoute: Routes.generateRoute,
     );
   }
