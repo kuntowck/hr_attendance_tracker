@@ -9,6 +9,7 @@ import 'package:hr_attendance_tracker/widgets/carousel.dart';
 import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:hr_attendance_tracker/providers/auth_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +17,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final attendanceProvider = context.watch<AttendanceProvider>();
-    final profileProvider = context.read<ProfileProvider>().profiles;
+    final profileProvider = context.read<ProfileProvider>().profile;
+    final authProvider = context.read<AuthProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -37,15 +39,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: ClipOval(
-                  child: profileProvider.profileImage != null
-                      ? Image.file(
-                          profileProvider.profileImage!,
+                  child:
+                      profileProvider!.profilePhoto != null &&
+                          profileProvider.profilePhoto!.isNotEmpty
+                      ? Image.network(
+                          profileProvider.profilePhoto!,
                           width: 36,
                           height: 36,
                           fit: BoxFit.cover,
                         )
                       : Image.asset(
-                          "assets/img/profile.jpg",
+                          "assets/img/logo-noimage.png",
                           width: 36,
                           height: 36,
                           fit: BoxFit.cover,
@@ -57,8 +61,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             DrawerHeader(
               child: Column(
@@ -67,15 +71,17 @@ class HomeScreen extends StatelessWidget {
                   Row(
                     children: [
                       ClipOval(
-                        child: profileProvider.profileImage != null
-                            ? Image.file(
-                                profileProvider.profileImage!,
+                        child:
+                            profileProvider!.profilePhoto != null &&
+                                profileProvider.profilePhoto!.isNotEmpty
+                            ? Image.network(
+                                profileProvider.profilePhoto!,
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,
                               )
                             : Image.asset(
-                                "assets/img/profile.jpg",
+                                "assets/img/logo-noimage.png",
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,
@@ -83,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        profileProvider.fullName,
+                        profileProvider.name,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -93,19 +99,44 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.phone),
-              title: Text('About'),
-              onTap: () {
-                Navigator.pushNamed(context, Routes.about);
-              },
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.phone),
+                    title: Text('About'),
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.about);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Settings'),
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.setting);
+                    },
+                  ),
+                ],
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, Routes.setting);
-              },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                ),
+                label: Text('Sign Out'),
+                icon: Icon(Icons.logout),
+                onPressed: () async {
+                  await authProvider.signOut();
+
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, Routes.login);
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -149,7 +180,7 @@ class HomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Hello, ${provider.fullName} 👋🏼",
+            "Hello, ${provider.name} 👋🏼",
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontSize: 20,
               fontWeight: FontWeight.bold,
