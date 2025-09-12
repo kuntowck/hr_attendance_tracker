@@ -12,7 +12,7 @@ class AttendanceStatus extends StatelessWidget {
       decoration: BoxDecoration(
         color: status == "Present"
             ? Colors.green.shade50
-            : status == "In Progress"
+            : status == "In Progress" || status == "employee"
             ? Colors.lightBlue.shade50
             : status == "Unknown"
             ? Colors.blueGrey.shade50
@@ -24,7 +24,7 @@ class AttendanceStatus extends StatelessWidget {
         style: TextStyle(
           color: status == "Present"
               ? Colors.green
-              : status == "In Progress"
+              : status == "In Progress" || status == "employee"
               ? Colors.blue
               : status == "Unknown"
               ? Colors.blueGrey

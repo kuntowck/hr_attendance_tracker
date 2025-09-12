@@ -14,7 +14,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = context.watch<ProfileProvider>().profiles;
+    final profileProvider = context.watch<ProfileProvider>();
 
     return Column(
       children: [
@@ -86,15 +86,16 @@ Widget profileHeader(BuildContext context, provider) {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: ClipOval(
-                child: provider.profileImage != null
-                    ? Image.file(
-                        provider.profileImage!,
+                child:
+                    provider.profile!.profilePhoto != null
+                    ? Image.network(
+                        provider.profile!.profilePhoto!,
                         width: 150,
                         height: 150,
                         fit: BoxFit.cover,
                       )
                     : Image.asset(
-                        "assets/img/profile.jpg",
+                        "assets/img/logo-noimage.png",
                         width: 150,
                         height: 150,
                         fit: BoxFit.cover,
@@ -105,18 +106,21 @@ Widget profileHeader(BuildContext context, provider) {
         ],
       ),
       const SizedBox(height: 8),
-      Text(provider.fullName, style: Theme.of(context).textTheme.headlineLarge),
+      Text(
+        provider.profile!.name,
+        style: Theme.of(context).textTheme.headlineLarge,
+      ),
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            provider.position,
+            provider.profile!.position ?? '',
             style: Theme.of(
               context,
             ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           Text(
-            provider.department,
+            provider.profile!.department ?? '',
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -140,17 +144,17 @@ Widget contactInfo(BuildContext context, provider) {
           ),
           ProfileItem(
             title: 'Email',
-            subtitle: provider.email,
+            subtitle: provider.profile.email ?? '',
             icon: Icons.email,
           ),
           ProfileItem(
             title: 'Phone',
-            subtitle: provider.phone,
+            subtitle: provider.profile.phone ?? '',
             icon: Icons.phone,
           ),
           ProfileItem(
             title: 'Location',
-            subtitle: provider.location,
+            subtitle: provider.profile.location ?? '',
             icon: Icons.location_on,
           ),
         ],

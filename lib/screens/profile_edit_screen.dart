@@ -86,15 +86,18 @@ Widget _headerProfileImage(
         child: Align(
           alignment: Alignment.bottomCenter,
           child: ClipOval(
-            child: profileProvider.profileImage != null
-                ? Image.file(
-                    profileProvider.profileImage!,
+            child: profileProvider.isLoading
+                ? Center(child: const CircularProgressIndicator())
+                : profileProvider.profile!.profilePhoto != null &&
+                      profileProvider.profile!.profilePhoto!.isNotEmpty
+                ? Image.network(
+                    profileProvider.profile!.profilePhoto!,
                     width: 150,
                     height: 150,
                     fit: BoxFit.cover,
                   )
                 : Image.asset(
-                    "assets/img/profile.jpg",
+                    "assets/img/logo-noimage.png",
                     width: 150,
                     height: 150,
                     fit: BoxFit.cover,
