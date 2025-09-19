@@ -11,6 +11,7 @@ import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/screens/attendance_history_screen.dart';
 import 'package:hr_attendance_tracker/screens/profile_screen.dart';
 import 'package:hr_attendance_tracker/screens/home_screen.dart';
+import 'package:hr_attendance_tracker/services/attendance_service.dart';
 import 'package:hr_attendance_tracker/widgets/custom_buttom_nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -37,10 +38,17 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AttendanceProvider()),
-        ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
         ChangeNotifierProvider(create: (_) => AdminProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, AttendanceProvider>(
+          create: (context) => AttendanceProvider(
+            context.read<AuthProvider>(),
+            AttendanceService(),
+          ),
+          update: (context, auth, previous) =>
+              AttendanceProvider(auth, AttendanceService()),
+        ),
       ],
       child: MyApp(),
     ),
@@ -74,7 +82,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // home: const MainScreen(),
-      initialRoute: Routes.login,
+      initialRoute: Routes.splash,
       onGenerateRoute: Routes.generateRoute,
     );
   }
