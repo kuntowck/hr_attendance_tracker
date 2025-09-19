@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hr_attendance_tracker/models/attendance_model.dart';
 import 'package:hr_attendance_tracker/providers/attendance_provider.dart';
+import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -40,6 +41,7 @@ class _AttendanceHistoryState extends State<AttendanceHistoryScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text("Attendance History"),
+        automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
           tabs: tabNames.map((name) => Tab(text: name)).toList(),
@@ -71,7 +73,7 @@ Widget buildProjectList(AttendanceProvider attendanceProvider, String tabName) {
 
   if (tabName == 'Attendance') {
     records = attendanceProvider.history
-        .where((record) => record.checkOut == null)
+        .where((record) => record.checkout == null)
         .toList();
   }
 
@@ -84,13 +86,13 @@ Widget buildProjectList(AttendanceProvider attendanceProvider, String tabName) {
       separatorBuilder: (context, index) => const SizedBox(height: 4),
       itemBuilder: (context, index) {
         final item = records[index];
-        return _tile(item, attendanceProvider);
+        return _tile(context, item, attendanceProvider);
       },
     ),
   );
 }
 
-Widget _tile(item, provider) {
+Widget _tile(BuildContext context, AttendanceModel item, AttendanceProvider provider) {
   return Card(
     color: Colors.white,
     elevation: 0,
@@ -101,24 +103,29 @@ Widget _tile(item, provider) {
         child: Icon(Icons.calendar_today, color: Colors.blue, size: 20),
       ),
       title: Text(
-        item.date != null ? DateFormat('EEEE, d MMM').format(item.date) : '',
+        DateFormat('EEEE, d MMM').format(item.date),
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Check In: ${item.checkIn != null ? DateFormat('HH:mm').format(item.checkIn) : '-'}",
+            "Check In: ${item.checkin != null ? DateFormat('HH:mm').format(item.checkin!) : '-'}",
           ),
           Text(
-            "Check Out: ${item.checkOut != null ? DateFormat('HH:mm').format(item.checkOut) : '-'}",
+            "Check Out: ${item.checkout != null ? DateFormat('HH:mm').format(item.checkout!) : '-'}",
           ),
           Text(
-            "Duration: ${item.duration != null ? '${item.duration.inHours} jam ${item.duration.inMinutes.remainder(60)} menit' : '-'}",
+            "Duration: ${item.duration != null ? '${item.duration!.inHours} jam ${item.duration!.inMinutes.remainder(60)} menit' : '-'}",
           ),
         ],
       ),
       trailing: AttendanceStatus(status: item.status ?? '-'),
+      onTap: () => Navigator.pushNamed(
+        context,
+        Routes.attendanceDetail,
+        arguments: item,
+      ),
     ),
   );
 }
