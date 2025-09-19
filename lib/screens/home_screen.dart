@@ -6,7 +6,6 @@ import 'package:hr_attendance_tracker/routes.dart';
 import 'package:hr_attendance_tracker/widgets/app_version.dart';
 import 'package:hr_attendance_tracker/widgets/attendance_status.dart';
 import 'package:hr_attendance_tracker/widgets/carousel.dart';
-import 'package:hr_attendance_tracker/widgets/custom_submit_button_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:hr_attendance_tracker/providers/auth_provider.dart';
@@ -234,10 +233,10 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text('Check-in:'),
                       Text(
-                        provider.record?.checkIn != null
+                        provider.record?.checkin != null
                             ? DateFormat(
                                 'HH:mm',
-                              ).format(provider.record!.checkIn!)
+                              ).format(provider.record!.checkin!)
                             : '-',
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
@@ -256,7 +255,13 @@ class HomeScreen extends StatelessWidget {
                     onPressed: provider.isCheckedIn || provider.isCheckedInToday
                         ? null
                         : () {
-                            provider.checkIn();
+                            provider.getLocation();
+
+                            Navigator.pushNamed(
+                              context,
+                              Routes.attendance,
+                              arguments: true,
+                            );
                           },
                     child: Text('Check-in'),
                   ),
@@ -264,15 +269,13 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 if (provider.record != null) ...[
                   Expanded(
-                    child: CustomSubmitButtonDialog(
-                      submitText: 'Check-out',
-                      titleDialog: 'Confirm Check Out',
-                      contentDialog: 'Are you sure want to chek-out now?',
-                      confirmButtonDialogText: 'Yes, check-out',
-                      validateForm: () => true,
-                      onSubmitAsync: () => provider.checkOut(),
-                      successMessage: 'Check-in succesfully.',
-                      errorMessage: 'Check-in failed',
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pushNamed(
+                        context,
+                        Routes.attendance,
+                        arguments: false,
+                      ),
+                      child: Text('Check-out'),
                     ),
                   ),
                 ],
